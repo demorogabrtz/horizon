@@ -1,0 +1,462 @@
+{%- liquid
+  assign section_settings = section.settings
+  assign product = product
+  
+  # Removemos hifens e underlines para garantir que o nome da classe JS seja válido
+  assign unique_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+  endif
+
+  capture wrapper_classes
+    echo 'product-tabs__wrapper '
+    if section_settings.mobile_icons_only
+      echo 'product-tabs--mobile-icons-only'
+    endif
+  endcapture
+-%}
+
+{%- comment -%}
+  Container da Seção:
+  - Controla a cor de fundo DA SEÇÃO INTEIRA (section_settings.color_scheme)
+  - Controla o espaçamento (padding)
+  - NÃO tem mais bordas
+{%- endcomment -%}
+<div class="section-background color-{{ section_settings.color_scheme }}"></div>
+
+<div
+  class="
+    section
+    section--{{ section_settings.section_width }}
+    color-{{ section_settings.color_scheme }}
+    spacing-style
+  "
+  style="
+    {% render 'spacing-style', settings: section_settings %}
+  "
+>
+  {%- comment -%}
+    Wrapper das Abas:
+    - Agora recebe o 'border-style' e o 'border-override'
+    - Tem sua própria cor de fundo (tabs_color_scheme)
+  {%- endcomment -%}
+  <product-tabs-{{ unique_id }}
+    class="
+      {{ wrapper_classes }}
+      border-style
+      color-{{ section_settings.tabs_color_scheme }}
+    "
+    style="
+      {% render 'border-override', settings: section_settings %}
+    "
+  >
+    <div class="product-tabs__header" role="tablist">
+      {% for i in (1..3) %}
+        {% liquid
+          assign tab_enabled_key = 'tab_' | append: i | append: '_enabled'
+          assign tab_title_key = 'tab_' | append: i | append: '_title'
+          assign tab_enabled = section_settings[tab_enabled_key]
+          assign tab_title = section_settings[tab_title_key]
+        %}
+        {% if tab_enabled %}
+          <button
+            class="product-tabs__button {{ section_settings.tab_preset }} {% if forloop.first %}is-active{% endif %}"
+            data-tab="tab-{{ i }}"
+            role="tab"
+            aria-controls="tab-content-{{ i }}-{{ unique_id }}"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          >
+            <span class="product-tabs__icon" style="--icon-size: {{ section_settings.icon_size }}px;">
+              {% case i %}
+                {% when 1 %}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><path d="M232,44H160a43.86,43.86,0,0,0-32,13.85A43.86,43.86,0,0,0,96,44H24A12,12,0,0,0,12,56V200a12,12,0,0,0,12,12H96a20,20,0,0,1,20,20,12,12,0,0,0,24,0,20,20,0,0,1,20-20h72a12,12,0,0,0,12-12V56A12,12,0,0,0,232,44ZM96,188H36V68H96a20,20,0,0,1,20,20V192.81A43.79,43.79,0,0,0,96,188Zm124,0H160a43.71,43.71,0,0,0-20,4.83V88a20,20,0,0,1,20-20h60ZM164,96h32a12,12,0,0,1,0,24H164a12,12,0,0,1,0-24Zm44,52a12,12,0,0,1-12,12H164a12,12,0,0,1,0-24h32A12,12,0,0,1,208,148Z"></path></svg>
+                {% when 2 %}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><path d="M172,164a12,12,0,0,1-12,12H96a12,12,0,0,1,0-24h64A12,12,0,0,1,172,164Zm-12-52H96a12,12,0,0,0,0,24h64a12,12,0,0,0,0-24Zm60-64V216a20,20,0,0,1-20,20H56a20,20,0,0,1-20-20V48A20,20,0,0,1,56,28H90.53a51.88,51.88,0,0,1,74.94,0H200A20,20,0,0,1,220,48ZM100.29,60h55.42a28,28,0,0,0-55.42,0ZM196,52H178.59A52.13,52.13,0,0,1,180,64v8a12,12,0,0,1-12,12H88A12,12,0,0,1,76,72V64a52.13,52.13,0,0,1,1.41-12H60V212H196Z"></path></svg>
+                {% when 3 %}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><path d="M226.73,66.63l-16-32A12,12,0,0,0,200,28H56a12,12,0,0,0-10.73,6.63l-16,32A12,12,0,0,0,28,72V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V72A12,12,0,0,0,226.73,66.63ZM192.58,52l6,12H57.42l6-12ZM52,204V88H204V204Zm116.49-64.49a12,12,0,0,1,0,17l-32,32a12,12,0,0,1-17,0l-32-32a12,12,0,0,1,17-17L116,151V112a12,12,0,0,1,24,0v39l11.51-11.52A12,12,0,0,1,168.49,139.51Z"></path></svg>
+              {% endcase %}
+            </span>
+            <span class="product-tabs__button-text">{{ tab_title }}</span>
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="product-tabs__content-wrapper">
+      {% for i in (1..3) %}
+        {% liquid
+          assign tab_enabled_key = 'tab_' | append: i | append: '_enabled'
+          assign tab_content_key = 'tab_' | append: i | append: '_content'
+          
+          assign tab_enabled = section_settings[tab_enabled_key]
+          assign tab_content = section_settings[tab_content_key]
+          
+          # Metafield fixo para a Tab 3
+          if i == 3
+            assign tab_metafield_path = 'custom.manual'
+          endif
+        %}
+        {% if tab_enabled %}
+          <div
+            id="tab-content-{{ i }}-{{ unique_id }}"
+            class="product-tabs__content {% if forloop.first %}is-active{% endif %}"
+            data-tab-content="tab-{{ i }}"
+            role="tabpanel"
+          >
+            <div class="product-tabs__content-text rte {{ section_settings.content_text_preset }}">
+              {{ tab_content }}
+            </div>
+
+            {% if i == 3 and tab_metafield_path != blank and product %}
+              {% assign metafield_parts = tab_metafield_path | split: '.' %}
+              {% if metafield_parts.size == 2 %}
+                {% assign namespace = metafield_parts[0] %}
+                {% assign key = metafield_parts[1] %}
+                {% assign file_metafield = product.metafields[namespace][key].value %}
+                
+                {% if file_metafield %}
+                  <a
+                    href="{{ file_metafield | file_url }}"
+                    class="product-tabs__file-button button button--primary"
+                    target="_blank"
+                    download
+                  >
+                    {{ section_settings.file_button_text }}
+                  </a>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </product-tabs-{{ unique_id }}>
+</div>
+
+<script>
+  (function() {
+    if (customElements.get('product-tabs-{{ unique_id }}')) return;
+
+    class ProductTabs{{ unique_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.tabButtons = this.querySelectorAll('.product-tabs__button');
+        this.tabContents = this.querySelectorAll('.product-tabs__content');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.tabButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const tabId = button.dataset.tab;
+            this.switchTab(tabId);
+          });
+        });
+      }
+
+      switchTab(tabId) {
+        this.tabButtons.forEach(button => {
+          if (button.dataset.tab === tabId) {
+            button.classList.add('is-active');
+            button.setAttribute('aria-selected', 'true');
+          } else {
+            button.classList.remove('is-active');
+            button.setAttribute('aria-selected', 'false');
+          }
+        });
+        this.tabContents.forEach(content => {
+          if (content.dataset.tabContent === tabId) {
+            content.classList.add('is-active');
+          } else {
+            content.classList.remove('is-active');
+          }
+        });
+      }
+    }
+
+    customElements.define('product-tabs-{{ unique_id }}', ProductTabs{{ unique_id }});
+  })();
+</script>
+
+{% stylesheet %}
+  .product-tabs__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    /* Importante para que o padding interno do 'border-style' não cole no conteúdo */
+    padding: 2rem; 
+  }
+  .product-tabs__header {
+    display: flex;
+    gap: 0.8rem;
+    border-bottom: 1px solid rgba(var(--color-border), 0.2);
+  }
+  .product-tabs__button {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.6rem;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    color: rgba(var(--color-foreground), 0.6);
+    transition: color 0.2s ease, border-color 0.2s ease;
+    text-align: left;
+  }
+  .product-tabs__button:hover {
+    color: var(--color-foreground);
+  }
+  .product-tabs__button.is-active {
+    color: var(--color-foreground);
+    border-bottom-color: rgb(var(--color-primary));
+    font-weight: var(--font-weight-bold);
+  }
+  .product-tabs__icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0;
+  }
+  .product-tabs__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .product-tabs__content {
+    display: none;
+  }
+  .product-tabs__content.is-active {
+    display: block;
+    animation: fade-in 0.3s ease;
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .product-tabs__content-title {
+    margin-top: 0;
+    margin-bottom: 1.6rem;
+  }
+  .product-tabs__file-button {
+    margin-top: 2rem;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-tabs__wrapper {
+       padding: 1rem;
+    }
+    .product-tabs--mobile-icons-only .product-tabs__button-text {
+      display: none;
+    }
+    .product-tabs--mobile-icons-only .product-tabs__button {
+      padding: 1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_tabs",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:content.tab_1"
+    },
+    { "type": "checkbox", "id": "tab_1_enabled", "label": "t:settings.enable_tab", "default": true },
+    { "type": "text", "id": "tab_1_title", "label": "t:settings.tab_title", "default": "Description" },
+    {
+      "type": "richtext",
+      "id": "tab_1_content",
+      "label": "t:settings.content",
+      "default": "<p>Add your product description here.</p>"
+    },
+
+    { "type": "header", "content": "t:content.tab_2" },
+    { "type": "checkbox", "id": "tab_2_enabled", "label": "t:settings.enable_tab", "default": true },
+    { "type": "text", "id": "tab_2_title", "label": "t:settings.tab_title", "default": "Specifications" },
+    {
+      "type": "richtext",
+      "id": "tab_2_content",
+      "label": "t:settings.content",
+      "default": "<p>Add your product specifications here.</p>"
+    },
+
+    { "type": "header", "content": "t:content.tab_3" },
+    { "type": "checkbox", "id": "tab_3_enabled", "label": "t:settings.enable_tab", "default": true },
+    { "type": "text", "id": "tab_3_title", "label": "t:settings.tab_title", "default": "Downloads" },
+    {
+      "type": "richtext",
+      "id": "tab_3_content",
+      "label": "t:settings.content",
+      "default": "<p>Download product documentation and resources below.</p>"
+    },
+    {
+      "type": "paragraph",
+      "content": "A terceira aba buscará automaticamente arquivos do metafield 'custom.manual' do produto."
+    },
+    { 
+      "type": "text", 
+      "id": "file_button_text", 
+      "label": "t:settings.file_button_text", 
+      "default": "Download File" 
+    },
+
+    { "type": "header", "content": "t:content.settings" },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "t:settings.icon_size",
+      "default": 24
+    },
+    { "type": "checkbox", "id": "mobile_icons_only", "label": "t:settings.mobile_icons_only", "default": true },
+
+    { "type": "header", "content": "t:content.typography" },
+    {
+      "type": "select",
+      "id": "tab_preset",
+      "label": "t:settings.tab_preset",
+      "options": [
+        { "value": "paragraph", "label": "t:options.paragraph" },
+        { "value": "h6", "label": "t:options.h6" }
+      ],
+      "default": "paragraph"
+    },
+    {
+      "type": "select",
+      "id": "content_text_preset",
+      "label": "t:settings.content_text_preset",
+      "options": [
+        { "value": "paragraph", "label": "t:options.paragraph" },
+        { "value": "rte", "label": "t:options.rte" }
+      ],
+      "default": "paragraph"
+    },
+    
+    { "type": "header", "content": "t:content.size" },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        { "value": "page-width", "label": "t:options.page" },
+        { "value": "full-width", "label": "t:options.full" }
+      ],
+      "default": "page-width"
+    },
+
+    { "type": "header", "content": "t:content.appearance" },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "tabs_color_scheme",
+      "label": "Esquema de cores das abas",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "border",
+      "label": "t:settings.borders",
+      "options": [
+        { "value": "none", "label": "t:options.none" },
+        { "value": "solid", "label": "t:options.solid" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 10,
+      "step": 0.5,
+      "unit": "px",
+      "label": "t:settings.border_width",
+      "default": 1,
+      "visible_if": "{{ section.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "t:settings.border_opacity",
+      "default": 100,
+      "visible_if": "{{ section.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+
+    { "type": "header", "content": "t:content.padding" },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_tabs",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
