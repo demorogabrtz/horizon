@@ -1,0 +1,148 @@
+/*
+.card-hovers {
+    transition: transform var(--hover-transition-duration) var(--hover-transition-timing), box-shadow var(--hover-transition-duration) var(--hover-transition-timing);
+    will-change: transform, box-shadow;
+    z-index: var(--layer-flat);
+  }
+.card-hovers:hover {
+    z-index: var(--layer-raised);
+    transform: translateY(calc(-1 * var(--hover-lift-amount)))
+  }
+*/
+
+/* JUDGE ME REVIEWS */
+a.jdgm-write-rev-link {
+  border-radius: 16px;
+}
+.jdgm-rev__icon {
+  border-radius: 100% !important;
+}
+.jdgm-star {
+  color: #8F70CC !important;
+}
+
+/* GENERAL CLASSES */
+
+li a:hover {
+  color: #8f70cc;
+  transition: color 0.3s ease;
+}
+.search-page-input{
+  border: 1px solid rgb(var(--color-border-rgb) / 0.1) !important;
+}
+/*
+.button-unstyled.slideshow-control.slideshow-control--shape-square,
+.button-unstyled.slideshow-control.slideshow-control--shape-circle {
+  background-color: var(--color-primary-button-text) !important;
+  color: var(--color-primary-button-background) !important;
+}
+*/
+picture {
+  width: 100% !important;
+}
+
+/* PRODUCT */
+.section.section--page-width.disable-section-top-offset.media-with-content.color-scheme-2.spacing-style.media-with-content--medium.media-with-content--media-extend {
+  border-top: 1px solid rgb(var(--color-border-rgb) / 0.1);
+}
+@media screen and (max-width: 748px) {
+  .group-block.group-block--height-fit.group-block--width-fill.border-style.spacing-style.size-style.color-scheme-2 {
+    padding: 16px !important;
+    margin-top: 16px;
+  }
+}
+.product-media-constraint-wrapper {
+  background: white;
+  border: 1px solid rgb(var(--color-border-rgb) / 0.1);
+}
+
+/* PRODUCT CARD */
+.underline-header-div {
+  display: flex;
+  flex-direction: column;
+}
+.underline-header {
+  background-color: #D0BEF6;
+  width: 160px;
+  height: 4px;
+}
+.product-media-container {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+:is(.product-grid__item, .resource-list__item) .product-media-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  z-index: -1;
+  background-color: #d0bef6;
+}
+:is(.product-grid__item, .resource-list__item):nth-child(4n+1) .product-media-container::before {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  transform: translate(-50%, -50%);
+}
+:is(.product-grid__item, .resource-list__item):nth-child(4n+2) .product-media-container::before {
+  border-radius: 53% 47% 52% 48% / 63% 37% 63% 37%;
+  transform: translate(-50%, -50%);
+}
+:is(.product-grid__item, .resource-list__item):nth-child(4n+3) .product-media-container::before {
+  border-radius: 65% 35% 35% 65% / 55% 45% 55% 45%;
+  transform: translate(-50%, -50%);
+}
+:is(.product-grid__item, .resource-list__item):nth-child(4n+4) .product-media-container::before {
+  border-radius: 46% 54% 46% 54% / 54% 46% 54% 46%;
+  transform: translate(-50%, -50%);
+}
+
+/* CART */
+img.cart-items__media-image.border-style {
+    --border-width: 1px !important;
+    --border-style: solid !important;
+    --border-color: rgb(var(--color-border-rgb) / 0.1) !important;
+  overflow: hidden !important;
+}
+
+/* HEADER */
+header-actions {
+  align-items: center;
+}
+.header-actions__action svg {
+  width: 26px !important;
+  height: 26px !important;
+}
+.header__icon--summary .header-drawer-icon {
+  width: 26px !important;
+  height: 26px !important;
+}
+.cart-bubble__background {
+  background-color: #8F70CC !important;
+}
+.cart-title .cart-bubble__text {
+  color: white !important;
+}
+.cart-drawer__heading .cart-bubble__text {
+  color: white !important;
+}
+@media (min-width: 768px) {
+  header-menu {
+    margin-left: 2rem;
+  }
+}
+
+/* FOOTER */
+.social-icons__icon-wrapper {
+  transition: transform var(--hover-transition-duration) var(--hover-transition-timing), box-shadow var(--hover-transition-duration) var(--hover-transition-timing);
+}
+.social-icons__icon-wrapper :hover {
+  color: #8F70CC;
+}
+.payment-icons__item {
+  transition: transform var(--hover-transition-duration) var(--hover-transition-timing), box-shadow var(--hover-transition-duration) var(--hover-transition-timing) !important;
+}
+.payment-icons__item {
+  transform: translateY(-2px) !important;
+}
