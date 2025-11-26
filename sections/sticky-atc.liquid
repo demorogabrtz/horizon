@@ -1,6 +1,40 @@
 {%- liquid
   assign section_settings = section.settings
   assign unique_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+  assign product = closest.product
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+  endif
+
+  assign variant = closest.product.selected_or_first_available_variant
+  assign inventory_quantity = variant.inventory_quantity
+  assign inventory_policy = variant.inventory_policy
+
+  if variant.inventory_management == 'shopify'
+    assign inventory_managed = true
+  endif
+
+  if variant.quantity_rule.min > variant.inventory_quantity and inventory_managed and inventory_policy == 'deny'
+    assign quantity_rule_soldout = true
+  endif
+
+  if inventory_managed
+    if inventory_quantity <= 0 and inventory_policy == 'deny' or quantity_rule_soldout
+      assign can_add_to_cart = false
+      assign add_to_cart_text = 'products.product.sold_out' | t
+    else
+      assign can_add_to_cart = true
+      assign add_to_cart_text = 'products.product.add_to_cart' | t
+    endif
+  else
+    if closest.product.selected_or_first_available_variant != null
+      assign can_add_to_cart = true
+      assign add_to_cart_text = 'products.product.add_to_cart' | t
+    else
+      assign can_add_to_cart = false
+      assign add_to_cart_text = 'products.product.unavailable' | t
+    endif
+  endif
 -%}
 
 <sticky-atc-{{ unique_id }}
@@ -15,11 +49,60 @@
     {% render 'border-override', settings: section_settings %}
   "
 >
-  
-  <div style="text-align: center;">
-    Sticky ATC (Placeholder)
-  </div>
 
+  <button type="button" class="sticky-atc__toggle" aria-label="Minimizar/Maximizar">
+    <span class="sticky-atc__toggle-dash"></span>
+  </button>
+
+  <div class="sticky-atc__content page-width" style="padding: 1rem">
+    {%- assign product_form_id = 'product-form-' | append: section.id -%}
+    <product-form-component data-section-id="{{ section.id }}">
+      {%- form 'product', product, id: product_form_id, class: 'sticky-atc_container', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+        <div class="sticky-atc__info">
+          {%- if product.featured_image != blank -%}
+            <img 
+              src="{{ product.featured_image | image_url: width: 120 }}" 
+              alt="{{ product.title | escape }}"
+              class="sticky-atc__image"
+              width="60"
+              height="60"
+              loading="lazy"
+            >
+          {%- endif -%}
+          
+          {%- liquid
+            assign text_preset_class = ''
+            if section.settings.type_preset != blank and section.settings.type_preset != 'custom'
+              assign text_preset_class = section.settings.type_preset
+            endif
+          -%}
+          
+          <div class="sticky-atc__info-text">
+            <h3 class="sticky-atc__title {{ text_preset_class }}">{{ product.title }}</h3>
+            <div class="sticky-atc__price {{ text_preset_class }}">
+              {{ product.selected_or_first_available_variant.price | money }}
+              {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+                <s style="opacity: 0.7; font-size: 0.8em;">{{ product.selected_or_first_available_variant.compare_at_price | money }}</s>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+
+        <div class="sticky-atc__actions">
+          {% content_for 'block', type: 'quantity', id: 'quantity' %}
+          {% content_for 'block',
+              type: 'add-to-cart',
+              id: 'add-to-cart',
+              can_add_to_cart: can_add_to_cart,
+              add_to_cart_text: add_to_cart_text
+          %}
+        </div>
+
+      {%- endform -%}
+    </product-form-component>
+  </div>
 </sticky-atc-{{ unique_id }}>
 
 <script>
@@ -30,15 +113,32 @@
       constructor() {
         super();
         this.onScroll = this.onScroll.bind(this);
+        this.toggleBar = this.toggleBar.bind(this);
+        this.isUserCollapsed = false;
       }
 
       connectedCallback() {
+        this.toggleBtn = this.querySelector('.sticky-atc__toggle');
         window.addEventListener('scroll', this.onScroll, { passive: true });
+        
+        if (this.toggleBtn) {
+          this.toggleBtn.addEventListener('click', this.toggleBar);
+        }
+        
         this.onScroll();
       }
 
       disconnectedCallback() {
         window.removeEventListener('scroll', this.onScroll);
+        if (this.toggleBtn) {
+          this.toggleBtn.removeEventListener('click', this.toggleBar);
+        }
+      }
+
+      toggleBar(e) {
+        if(e) e.stopPropagation();
+        this.isUserCollapsed = !this.isUserCollapsed;
+        this.classList.toggle('is-user-collapsed', this.isUserCollapsed);
       }
 
       onScroll() {
@@ -46,6 +146,8 @@
           this.classList.add('is-visible');
         } else {
           this.classList.remove('is-visible');
+          this.classList.remove('is-user-collapsed');
+          this.isUserCollapsed = false;
         }
       }
     }
@@ -71,6 +173,116 @@
     transform: translateY(0);
     visibility: visible;
   }
+
+  .sticky-atc.is-visible.is-user-collapsed {
+    transform: translateY(calc(100% - 32px));
+  }
+
+  .sticky-atc_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .sticky-atc__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sticky-atc__info {
+    display: none;
+  }
+
+  .sticky-atc__image {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(var(--color-border-rgb) / 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .sticky-atc__info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sticky-atc__title {
+    margin: 0;
+    font-family: var(--font-heading-family);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .sticky-atc__price {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    line-height: 1.1;
+  }
+  
+  .sticky-atc__info-text .h1, 
+  .sticky-atc__info-text .h2, 
+  .sticky-atc__info-text .h3, 
+  .sticky-atc__info-text .h4, 
+  .sticky-atc__info-text .h5, 
+  .sticky-atc__info-text .h6,
+  .sticky-atc__info-text .paragraph {
+      margin: 0 !important;
+  }
+
+  @media screen and (min-width: 750px) {
+    .sticky-atc_container {
+      justify-content: space-around;
+    }
+
+    .sticky-atc__info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+  }
+
+  .sticky-atc__toggle {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-block: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgb(var(--color-foreground));
+    outline: none;
+  }
+
+  .sticky-atc__toggle-dash {
+    display: block;
+    width: 96px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: currentColor;
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+  }
+
+  .sticky-atc__toggle:hover .sticky-atc__toggle-dash {
+    opacity: 0.6;
+  }
+
+  .sticky-atc__content {
+    position: relative;
+    z-index: 1;
+    flex-grow: 1;
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -82,32 +294,6 @@
     "templates": ["product"]
   },
   "settings": [
-    {
-      "type": "header",
-      "content": "t:content.buttons"
-    },
-    {
-      "type": "select",
-      "id": "button_style",
-      "label": "t:settings.style",
-      "options": [
-        {
-          "value": "button button--primary",
-          "label": "t:options.primary"
-        },
-        {
-          "value": "button button--secondary",
-          "label": "t:options.secondary"
-        }
-      ],
-      "default": "button button--primary"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_quantity",
-      "label": "t:names.quantity",
-      "default": true
-    },
     {
       "type": "paragraph",
       "content": "t:content.sticky_atc_guide"
@@ -233,7 +419,20 @@
   "presets": [
     {
       "name": "t:names.sticky_atc",
-      "category": "t:categories.product"
+      "category": "t:categories.product",
+      "blocks": {
+        "quantity": {
+          "type": "quantity",
+          "static": true
+        },
+        "add-to-cart": {
+          "type": "add-to-cart",
+          "static": true,
+          "settings": {
+            "style_class": "button-secondary"
+          }
+        }
+      }
     }
   ]
 }
