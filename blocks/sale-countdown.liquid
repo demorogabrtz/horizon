@@ -1,0 +1,423 @@
+{%- liquid
+  assign block_settings = block.settings
+  assign unique_id = block.id | replace: '_', '' | downcase
+  
+  assign product = closest.product
+
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first | default: false
+  endif
+
+  assign sale_end_date = product.metafields.custom.sale_end_date.value
+
+  assign is_on_sale = false
+  if product.compare_at_price > product.price
+    assign is_on_sale = true
+  endif
+
+  assign show_block = false
+  if is_on_sale and sale_end_date != blank
+    assign sale_end_timestamp = sale_end_date | date: '%s' | times: 1
+    assign current_timestamp = 'now' | date: '%s' | times: 1
+
+    if sale_end_timestamp > current_timestamp
+      assign show_block = true
+    endif
+  endif
+-%}
+
+{%- if show_block or request.visual_preview_mode -%}
+  <sale-countdown-{{ unique_id }}
+    class="sale-countdown spacing-style"
+    style="
+      {%- render 'spacing-style', settings: block_settings -%}
+    "
+    data-end-time="{{ sale_end_date | date: '%Y-%m-%dT%H:%M:%S' }}"
+    data-show-block="{{ show_block }}"
+    {{ block.shopify_attributes }}
+  >
+    <div
+      class="
+        sale-countdown__wrapper
+        {% if block_settings.inherit_color_scheme == false %}color-{{ block_settings.color_scheme }}{% else %}color-inherit{% endif %}
+      "
+      style="
+        --wrapper-border-radius: {{ block_settings.wrapper_border_radius }}px;
+        --wrapper-border-width: {{ block_settings.wrapper_border_width }}px;
+        --wrapper-border-color: {{ block_settings.wrapper_border_color }};
+        
+        --unit-background-color: {{ block_settings.unit_background_color }};
+        --number-color: {{ block_settings.number_color }};
+        --label-color: {{ block_settings.label_color }};
+      "
+    >
+      {%- if block_settings.title != blank -%}
+        <p class="sale-countdown__title {{ block_settings.title_preset }}">
+          {{ block_settings.title }}
+        </p>
+      {%- endif -%}
+
+      <div class="sale-countdown__timer">
+        <div
+          class="sale-countdown__unit"
+          style="
+            --unit-border-radius: {{ block_settings.unit_border_radius }}px;
+            --unit-border-width: {{ block_settings.unit_border_width }}px;
+            --unit-border-color: {{ block_settings.unit_border_color }};
+            
+            background-color: var(--unit-background-color);
+          "
+        >
+          <div class="sale-countdown__value {{ block_settings.number_preset }}" data-days>00</div>
+          <div class="sale-countdown__label {{ block_settings.label_preset }}">{{ 'blocks.sale_countdown.days' | t }}</div>
+        </div>
+
+        <div class="sale-countdown__divider {{ block_settings.number_preset }}">:</div>
+
+        <div
+          class="sale-countdown__unit"
+          style="
+            --unit-border-radius: {{ block_settings.unit_border_radius }}px;
+            --unit-border-width: {{ block_settings.unit_border_width }}px;
+            --unit-border-color: {{ block_settings.unit_border_color }};
+            
+            background-color: var(--unit-background-color);
+          "
+        >
+          <div class="sale-countdown__value {{ block_settings.number_preset }}" data-hours>00</div>
+          <div class="sale-countdown__label {{ block_settings.label_preset }}">{{ 'blocks.sale_countdown.hours' | t }}</div>
+        </div>
+
+        <div class="sale-countdown__divider {{ block_settings.number_preset }}">:</div>
+
+        <div
+          class="sale-countdown__unit"
+          style="
+            --unit-border-radius: {{ block_settings.unit_border_radius }}px;
+            --unit-border-width: {{ block_settings.unit_border_width }}px;
+            --unit-border-color: {{ block_settings.unit_border_color }};
+            
+            background-color: var(--unit-background-color);
+          "
+        >
+          <div class="sale-countdown__value {{ block_settings.number_preset }}" data-minutes>00</div>
+          <div class="sale-countdown__label {{ block_settings.label_preset }}">{{ 'blocks.sale_countdown.minutes' | t }}</div>
+        </div>
+
+        <div class="sale-countdown__divider {{ block_settings.number_preset }}">:</div>
+
+        <div
+          class="sale-countdown__unit"
+          style="
+            --unit-border-radius: {{ block_settings.unit_border_radius }}px;
+            --unit-border-width: {{ block_settings.unit_border_width }}px;
+            --unit-border-color: {{ block_settings.unit_border_color }};
+            
+            background-color: var(--unit-background-color);
+          "
+        >
+          <div class="sale-countdown__value {{ block_settings.number_preset }}" data-seconds>00</div>
+          <div class="sale-countdown__label {{ block_settings.label_preset }}">{{ 'blocks.sale_countdown.seconds' | t }}</div>
+        </div>
+      </div>
+    </div>
+  </sale-countdown-{{ unique_id }}>
+{%- endif -%}
+
+<script>
+  (function() {
+    if (customElements.get('sale-countdown-{{ unique_id }}')) return;
+
+    class SaleCountdown{{ unique_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.endTime = new Date(this.dataset.endTime).getTime();
+        this.daysEl = this.querySelector('[data-days]');
+        this.hoursEl = this.querySelector('[data-hours]');
+        this.minutesEl = this.querySelector('[data-minutes]');
+        this.secondsEl = this.querySelector('[data-seconds]');
+        this.interval = null;
+
+        if (this.dataset.showBlock === 'false' && !Shopify.designMode) {
+          this.style.display = 'none';
+          return;
+        }
+      }
+
+      connectedCallback() {
+        if (isNaN(this.endTime)) {
+          if (!Shopify.designMode) this.style.display = 'none';
+          return;
+        }
+        this.startTimer();
+      }
+
+      disconnectedCallback() {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+      }
+
+      startTimer() {
+        this.updateCountdown();
+        this.interval = setInterval(() => this.updateCountdown(), 1000);
+      }
+
+      updateCountdown() {
+        const now = new Date().getTime();
+        const distance = this.endTime - now;
+
+        if (distance < 0) {
+          this.hideBlock();
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        this.daysEl.textContent = String(days).padStart(2, '0');
+        this.hoursEl.textContent = String(hours).padStart(2, '0');
+        this.minutesEl.textContent = String(minutes).padStart(2, '0');
+        this.secondsEl.textContent = String(seconds).padStart(2, '0');
+      }
+
+      hideBlock() {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+        this.style.display = 'none';
+      }
+    }
+
+    customElements.define('sale-countdown-{{ unique_id }}', SaleCountdown{{ unique_id }});
+  })();
+</script>
+
+{% stylesheet %}
+  .sale-countdown__wrapper {
+    border-radius: var(--wrapper-border-radius);
+    border: var(--wrapper-border-width) solid var(--wrapper-border-color);
+  }
+  .sale-countdown__wrapper.color-inherit {
+    background-color: transparent;
+    color: inherit;
+  }
+  .sale-countdown__title {
+    margin: 0 0 1rem 0;
+  }
+  .sale-countdown__timer {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .sale-countdown__unit {
+    display: flex;
+    flex-direction: column;
+    min-width: 50px;
+    padding: 0.5rem;
+    border-radius: var(--unit-border-radius);
+    border: var(--unit-border-width) solid var(--unit-border-color);
+  }
+  
+  .sale-countdown__wrapper .sale-countdown__value {
+    line-height: 1.2;
+    color: var(--number-color);
+  }
+  .sale-countdown__wrapper .sale-countdown__label {
+    line-height: 1.2;
+    margin-top: 0.25rem;
+    color: var(--label-color);
+  }
+  .sale-countdown__wrapper .sale-countdown__divider {
+    line-height: 1.2;
+    padding-top: 0.5rem;
+    color: var(--number-color);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.sale_countdown",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:info.sale_countdown"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "A oferta termina em:"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "inherit_color_scheme",
+      "label": "t:settings.inherit_color_scheme",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+    },
+    {
+      "type": "range",
+      "id": "wrapper_border_width",
+      "min": 0, "max": 10, "step": 1, "unit": "px",
+      "label": "t:settings.border_width",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "wrapper_border_color",
+      "label": "t:settings.border_color",
+      "default": "#0000001A"
+    },
+    {
+      "type": "range",
+      "id": "wrapper_border_radius",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "label": "t:settings.border_radius",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "t:content.unit_appearance"
+    },
+    {
+      "type": "color",
+      "id": "unit_background_color",
+      "label": "t:settings.unit_background_color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "t:settings.number_color",
+      "default": "#1D1D1F"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "t:settings.label_color",
+      "default": "#434345"
+    },
+    {
+      "type": "range",
+      "id": "unit_border_width",
+      "min": 0, "max": 10, "step": 1, "unit": "px",
+      "label": "t:settings.border_width",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "unit_border_color",
+      "label": "t:settings.border_color",
+      "default": "#0000001A"
+    },
+    {
+      "type": "range",
+      "id": "unit_border_radius",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "label": "t:settings.border_radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "title_preset",
+      "label": "t:settings.title_preset",
+      "options": [
+        { "value": "paragraph", "label": "t:options.paragraph" },
+        { "value": "h4", "label": "t:options.h4" },
+        { "value": "h3", "label": "t:options.h3" }
+      ],
+      "default": "h4"
+    },
+    {
+      "type": "select",
+      "id": "number_preset",
+      "label": "t:settings.number_preset",
+      "options": [
+        { "value": "paragraph", "label": "t:options.paragraph" },
+        { "value": "h4", "label": "t:options.h4" },
+        { "value": "h3", "label": "t:options.h3" },
+        { "value": "h2", "label": "t:options.h2" }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "select",
+      "id": "label_preset",
+      "label": "t:settings.label_preset",
+      "options": [
+        { "value": "paragraph", "label": "t:options.paragraph" },
+        { "value": "label", "label": "t:options.label" }
+      ],
+      "default": "label"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.sale_countdown",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

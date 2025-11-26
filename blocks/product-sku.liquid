@@ -1,0 +1,113 @@
+
+
+{% liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign current_variant = product.selected_or_first_available_variant
+
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+    assign current_variant = product.variants.first
+  endif
+%}
+
+{%- if current_variant.sku != blank or request.design_mode -%}
+  <div class="product-sku {{ block_settings.type_preset }}" {{ block.shopify_attributes }}>
+    {%- if block.settings.show_label -%}
+      <span class="product-sku__label">{{ block.settings.label_text }}</span>
+    {%- endif -%}
+
+    <span class="product-sku__value">
+      {%- if current_variant.sku != blank -%}
+        {{ current_variant.sku }}
+      {%- else -%}
+        {{- block.settings.fallback_text -}}
+      {%- endif -%}
+    </span>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .product-sku {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    word-break: break-all;
+  }
+  .product-sku__label {
+    opacity: 0.7;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_sku",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_label",
+      "label": "t:settings.show_label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "t:settings.label_text",
+      "default": "SKU:"
+    },
+    {
+      "type": "text",
+      "id": "fallback_text",
+      "label": "t:settings.fallback_text",
+      "default": "N/A"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "t:settings.preset",
+      "options": [
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.h3"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        }
+      ],
+      "default": "paragraph"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_sku",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

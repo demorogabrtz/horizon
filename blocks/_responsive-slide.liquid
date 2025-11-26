@@ -1,0 +1,288 @@
+{% assign block_settings = block.settings %}
+{%- assign block_index = section.blocks | find_index: 'id', block.id -%}
+{%- assign section_index = section.index -%}
+
+{% capture children %}
+  {% liquid
+    assign desktop_image = block_settings.desktop_image
+    assign mobile_image = block_settings.mobile_image
+    assign desktop_video = block_settings.desktop_video
+    assign mobile_video = block_settings.mobile_video | default: block_settings.desktop_video
+  %}
+  
+  <a href="{{ block_settings.link | default: 'javascript:void(0);'}}"
+     class="slide__link-wrapper"
+     aria-label="{{ desktop_image.alt | default: mobile_image.alt | default: desktop_video.preview_image.alt | default: mobile_video.preview_image.alt | default: 'Slide' }}"
+     {%- if block_settings.open_in_new_tab -%}
+       target="_blank"
+       rel="noopener noreferrer"
+     {%- endif -%}
+  >
+  <div class="slide__image-container">
+    {%- if block_settings.toggle_overlay -%}
+      {% render 'overlay', settings: block_settings %}
+    {%- endif -%}
+
+    {%- liquid
+      assign loading = 'lazy'
+
+      if block_index == 0 and section_index <= 3
+        assign loading = 'eager'
+      endif
+
+      assign fetchpriority = 'low'
+      if block_index == 0 and section_index == 1
+        assign fetchpriority = 'high'
+      endif
+    -%}
+
+    {%- if block_settings.media_type_1 == 'image' -%}
+
+      {%- if desktop_image != blank or mobile_image != blank -%}
+        <picture>
+          {%- assign mobile_preview_image = mobile_image | default: desktop_image -%}
+          {%- assign desktop_preview_image = desktop_image | default: mobile_image -%}
+
+          {%- if mobile_preview_image != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="{{ mobile_preview_image | image_url: width: 1200 }}"
+              width="{{ mobile_preview_image.width }}"
+              height="{{ mobile_preview_image.height }}"
+            >
+          {%- endif -%}
+
+          {%- if desktop_preview_image != blank -%}
+            <source
+              media="(min-width: 750px)"
+              srcset="{{ desktop_preview_image | image_url: width: 3840 }}"
+              width="{{ desktop_preview_image.width }}"
+              height="{{ desktop_preview_image.height }}"
+            >
+          {%- endif -%}
+
+          {%- comment -%} O <img> é o fallback obrigatório {%- endcomment -%}
+          {{
+            desktop_preview_image
+            | image_url: width: 3840
+            | image_tag:
+              sizes: '100vw',
+              widths: '320, 400, 600, 800, 1200, 1600, 1920, 2560, 3840',
+              class: 'slide__image',
+              loading: loading,
+              fetchpriority: fetchpriority
+          }}
+        </picture>
+      {%- else -%}
+        {%- liquid
+          assign modulo_result = block_index | modulo: 2
+          assign placeholder_variant = 2 | minus: modulo_result
+          assign placeholder_name = 'hero-apparel-' | append: placeholder_variant
+        -%}
+        {{ placeholder_name | placeholder_svg_tag: 'slide__image' }}
+      {%- endif -%}
+
+    {%- else -%}
+
+      {%- if desktop_video != blank or mobile_video != blank -%}
+        {%- assign mobile_video_to_use = mobile_video | default: desktop_video -%}
+        {%- assign desktop_video_to_use = desktop_video | default: mobile_video -%}
+
+        {{
+          desktop_video_to_use
+          | video_tag:
+            poster: desktop_video_to_use.preview_image,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: 'slide__video',
+            image_size: '3840x'
+        }}
+
+        {%- if mobile_video_to_use != blank and mobile_video_to_use != desktop_video_to_use -%}
+          <script>
+            (function() {
+              const videoTag = document.currentScript.previousElementSibling;
+              if (videoTag && videoTag.tagName === 'VIDEO') {
+                const mobileSource = document.createElement('source');
+                
+                mobileSource.src = '{{ mobile_video_to_use.sources[0].url }}';
+                mobileSource.type = '{{ mobile_video_to_use.sources[0].mime_type }}';
+                
+                mobileSource.media = '(max-width: 749px)';
+                videoTag.prepend(mobileSource);
+              }
+            })();
+          </script>
+        {%- endif -%}
+
+      {%- else -%}
+        {%- liquid
+          assign modulo_result = block_index | modulo: 2
+          assign placeholder_variant = 2 | minus: modulo_result
+          assign placeholder_name = 'hero-apparel-' | append: placeholder_variant
+        -%}
+        {{ placeholder_name | placeholder_svg_tag: 'slide__image' }}
+      {%- endif -%}
+
+    {%- endif -%}
+  </div>
+  </a>
+{% endcapture %}
+
+{% render 'slideshow-slide', index: block_index, children: children, attributes: block.shopify_attributes %}
+
+{% stylesheet %}
+  .slide__link-wrapper {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+  slideshow-slide > .slide__link-wrapper > .slide__image-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .slide__image-container > .slide__image,
+  .slide__image-container > picture > .slide__image,
+  .slide__image-container > .slide__video,
+  .slide__image-container > .slide__video-poster {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+  .slide__image-container > .slide__video-poster {
+    position: absolute;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.responsive_slide",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "media_type_1",
+      "label": "t:settings.type",
+      "options": [
+        {
+          "value": "image",
+          "label": "t:options.image"
+        },
+        {
+          "value": "video",
+          "label": "t:options.video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "t:settings.image",
+      "visible_if": "{{ block.settings.media_type_1 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "t:settings.mobile_image.label",
+      "info": "t:settings.mobile_image.info",
+      "visible_if": "{{ block.settings.media_type_1 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video",
+      "label": "Desktop video",
+      "visible_if": "{{ block.settings.media_type_1 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video",
+      "label": "Mobile video",
+      "info": "Optional. If empty, the desktop video will be used.",
+      "visible_if": "{{ block.settings.media_type_1 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.block_link"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:settings.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "t:settings.open_new_tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "toggle_overlay",
+      "label": "t:settings.media_overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "t:settings.overlay_color",
+      "alpha": true,
+      "default": "#00000026",
+      "visible_if": "{{ block.settings.toggle_overlay }}"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "t:settings.overlay_style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "t:options.solid"
+        },
+        {
+          "value": "gradient",
+          "label": "t:options.gradient"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ block.settings.toggle_overlay }}"
+    },
+    {
+      "type": "select",
+      "id": "gradient_direction",
+      "label": "t:settings.gradient_direction",
+      "options": [
+        {
+          "value": "to top",
+          "label": "t:options.up"
+        },
+        {
+          "value": "to bottom",
+          "label": "t:options.down"
+        }
+      ],
+      "default": "to top",
+      "visible_if": "{{ block.settings.toggle_overlay and block.settings.overlay_style == 'gradient' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.responsive_slide"
+    }
+  ]
+}
+{% endschema %}
