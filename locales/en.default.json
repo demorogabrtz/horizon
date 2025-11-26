@@ -105,6 +105,21 @@
     "sort": "Sort"
   },
   "blocks": {
+    // FLAMMA DIGITAL CODE - Blocks //
+    "shipping_calculator": {
+      "error_invalid_cep": "Please enter a valid CEP.",
+      "error_no_options": "No shipping options could be found for this CEP.",
+      "error_calculation_failed": "Error calculating shipping. Please try again.",
+      "estimated_delivery_prefix": "Estimated delivery date:",
+      "calculated_at_checkout": "Shipping calculated at checkout."
+    },
+    "sale_countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Mins",
+      "seconds": "Secs"
+    },
+    // FLAMMA DIGITAL CODE - Blocks end //
     "contact_form": {
       "name": "Name",
       "email": "Email",
