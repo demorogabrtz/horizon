@@ -1,5 +1,34 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "names": {
+    // FLAMMA DIGITAL CODE - Name //
+    "safe_icons": "Ícones de segurança",
+    "product_sku": "SKU do produto",
+    "discount_badge": "Badge de desconto",
+    "price_installments": "Parcelamento",
+    "customer_review_line": "Avaliação de clientes",
+    "product_tabs": "Abas do produto",
+    "shipping_calculator": "Calculadora Intelipost",
+    "responsive_slide": "Slide responsivo",
+    "instagram_feed": "Feed do Instagram",
+    "instagram_card": "Cards do Instagram",
+    "instagram_post": "Post",
+    "extra_payment": "Pagamentos extras",
+    "extra_menu": "Menu extras",
+    "responsive_slideshow": "Slideshow responsivo",
+    "sale_countdown": "Contador de promoção",
+    "product_video": "Vídeo do produto",
+    "sticky_atc": "Adicionar ao carrinho fixo",
+    // FLAMMA DIGITAL CODE - Name end //
+    "column": "Coluna",
     "404": "404",
     "borders": "Bordas",
     "collapsible_row": "Linha recolhível",
@@ -177,6 +206,108 @@
     "policies_and_links": "Políticas e links"
   },
   "settings": {
+    // FLAMMA DIGITAL CODE - Settings //
+    "badge_1": {
+      "svg": "SVG Primário",
+      "link": "Link"
+    },
+    "badge_2": {
+      "svg": "SVG Secundário",
+      "link": "Link"
+    },
+    "badge_3": {
+      "svg": "SVG Terciário",
+      "link": "Link"
+    },
+    "badge_color": "Cor do selo",
+    "badge_hover_color": "Cor do selo (hover)",
+    "badge_size": "Tamanho do selo",
+    "custom_badge_1_header": "Selo primário",
+    "custom_badge_2_header": "Selo secundário",
+    "custom_badge_tag": "Tag",
+    "custom_badge_text": "Texto",
+    "custom_badge_color_scheme": "Cor",
+    "show_label": "Mostrar rótulo",
+    "label_text": "Texto do rótulo",
+    "fallback_text": "Texto quando SKU estiver vazio",
+    "display_as": "Exibir como",
+    "percentage_suffix": "Sufixo de porcentagem",
+    "currency_symbol": "Símbolo da moeda",
+    "amount_suffix": "Sufixo de valor",
+    "installments_number": "Número de parcelas",
+    "prefix_text": "Texto de prefixo",
+    "middle_text": "Texto central",
+    "suffix_text": "Texto de sufixo",
+    "show_icon": "Mostrar ícone",
+    "custom_icon": "Ícone personalizado",
+    "icon_size": "Tamanho do ícone",
+    "remove_padding_no_icon": {
+      "label": "Remover preenchimento interno",
+      "info": "Faz o texto ficar rente às bordas. Disponível apenas quando o ícone está desativado."
+    },
+    "border_color": "Cor da borda",
+    "avatar_1": "Cliente 1",
+    "avatar_2": "Cliente 2",
+    "avatar_3": "Cliente 3",
+    "avatar_4": "Cliente 4",
+    "review_text": "Texto da avaliação",
+    "star_color": "Cor da estrela",
+    "avatar_size": "Tamanho do avatar",
+    "avatar_overlap": "Sobreposição do avatar",
+    "avatar_border_width": "Largura da borda do avatar",
+    "padding_vertical": "Preenchimento vertical",
+    "enable_tab": "Ativar aba",
+    "tab_title": "Título da aba",
+    "content_title": "Título do conteúdo",
+    "metafield_path": {
+      "label": "Caminho do metacampo de arquivo",
+      "info": "Insira o caminho no formato 'namespace.key' (ex: custom.file_download). Deve ser um metacampo do tipo 'Arquivo'."
+    },
+    "file_button_text": "Texto do botão de download",
+    "mobile_icons_only": "Mostrar apenas ícones no celular",
+    "tab_preset": "Estilo do texto da aba",
+    "content_title_preset": "Estilo do título do conteúdo",
+    "content_text_preset": "Estilo do texto do conteúdo",
+    "cep_placeholder": "Placeholder do campo de CEP",
+    "calculate_button_text": "Texto do botão Calcular",
+    "default_weight": "Peso padrão (kg)",
+    "default_weight_info": "Usado se o produto não tiver peso definido.",
+    "default_width": "Largura padrão (cm)",
+    "default_height": "Altura padrão (cm)",
+    "default_length": "Comprimento padrão (cm)",
+    "origin_zip_code": "CEP de origem",
+    "intelipost_api_key_label": "Chave da API Intelipost",
+    "intelipost_api_key_info": "Aviso: Expor esta chave no tema é um risco de segurança.",
+    "desktop_slide": "Altura (Desktop)",
+    "mobile_slide": "Altura (Mobile)",
+    "mobile_image": {
+      "label": "Imagem (mobile)",
+      "info": "Opcional. Se estiver vazio, usará a imagem do desktop."
+    },
+    "mobile_video": {
+      "label": "Vídeo (mobile)",
+      "info": "Opcional. Se estiver vazio, usará o vídeo do desktop."
+    },
+    "posts_style": "Estilo dos posts",
+    "profile_pic": "Foto de perfil",
+    "username": "Nome de usuário",
+    "location": "Localização",
+    "caption": "Legenda",
+    "show_pix_icon": "Mostrar Pix",
+    "show_boleto_icon": "Mostrar Boleto",
+    "first_item_icon": "Primeiro ícone",
+    "second_item_icon": "Segundo ícone",
+    "third_item_icon": "Terceiro ícone",
+    "fourth_item_icon": "Quarto ícone",
+    "title_preset": "Título",
+    "number_preset": "Números",
+    "label_preset": "Rótulos",
+    "unit_background_color": "Fundo do contador",
+    "number_color": "Cor dos números",
+    "label_color": "Cor dos rótulos",
+    "controls": "Controles",
+    "mute": "Mudo",
+    // FLAMMA DIGITAL CODE - Settings end //
     "alignment": "Alinhamento",
     "autoplay": "Reprodução automática",
     "background": "Plano de fundo",
@@ -544,6 +675,16 @@
     "media_type_2": "Tipo de mídia 2"
   },
   "options": {
+    // FLAMMA DIGITAL CODE - Options //
+    "columns_3": "Três colunas",
+    "columns_1": "Uma coluna",
+    "percentage": "Porcentagem",
+    "amount": "Valor",
+    "email": "Email",
+    "phone": "Telefone",
+    "contact": "Contato",
+    "hours": "Horário",
+    // FLAMMA DIGITAL CODE - Options end //
     "adapt_to_image": "Adaptar à imagem",
     "apple": "Maçã",
     "arrow": "Seta",
@@ -816,6 +957,19 @@
     "subtle_zoom": "Zoom"
   },
   "content": {
+    // FLAMMA DIGITAL CODE - Content //
+    "badges": "Conteúdo do selo",
+    "discount_type": "Tipo de desconto",
+    "tab_1": "Primeira aba",
+    "tab_2": "Segunda aba",
+    "tab_3": "Terceira aba",
+    "settings": "Configurações gerais",
+    "product_defaults": "Padrões do produto",
+    "api_settings": "Configurações da API",
+    "unit_appearance": "Aparência dos contadores",
+    "video_guide": "Exibe vídeos dos metafields 'custom.product_video' (Desktop) e 'custom.product_video_mobile' (Mobile).",
+    "sticky_atc_guide": "Esta barra aparecerá automaticamente quando o botão 'Adicionar ao carrinho' principal rolar para fora da tela.",
+    // FLAMMA DIGITAL CODE - Content end //
     "advanced": "Avançado",
     "background_image": "Imagem de fundo",
     "background_video": "Vídeo de fundo",
@@ -1003,10 +1157,12 @@
     "view_all_button_label": "Ver tudo",
     "what_is_return_policy": "Qual é a política de devolução?",
     "when_will_order_arrive": "Quando receberei meu pedido?",
-    "where_are_products_made": "Onde seus produtos são fabricados?",
-    "faq": "Perguntas frequentes"
+    "where_are_products_made": "Onde seus produtos são fabricados?"
   },
   "info": {
+    // FLAMMA DIGITAL CODE - Info //
+    "sale_countdown": "Exibe automaticamente um contador se o produto estiver em promoção e tiver um metafield 'Data de fim da promoção' (custom.sale_end_date) definido no futuro.",
+    // FLAMMA DIGITAL CODE - Info end //
     "video_alt_text": "Descreva o vídeo para usuários de tecnologia assistiva",
     "video_autoplay": "Por padrão, os vídeos serão silenciados",
     "video_external": "Usar URL do YouTube ou do Vimeo",
