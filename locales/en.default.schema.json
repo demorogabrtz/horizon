@@ -32,6 +32,19 @@
     "text": "Text"
   },
   "content": {
+    // FLAMMA DIGITAL CODE - Content //
+    "badges": "Badge content",
+    "discount_type": "Discount type",
+    "tab_1": "First tab",
+    "tab_2": "Second tab",
+    "tab_3": "Third tab",
+    "settings": "General settings",
+    "product_defaults": "Product defaults",
+    "api_settings": "API settings",
+    "unit_appearance": "Counter unit appearance",
+    "video_guide": "Display videos from the metafields 'custom.product_video' (Desktop) and 'custom.product_video_mobile' (Mobile).",
+    "sticky_atc_guide": "This bar will automatically appear when the main 'Add to cart' button is scrolled off the screen.",
+    // FLAMMA DIGITAL CODE - Content end //
     "visible_if_collection_has_more_products": "Visible if collection has more products than shown",
     "adjustments_affect_all_content": "Applies to all content in this block",
     "advanced": "Advanced",
@@ -195,6 +208,9 @@
     "work_quickly_to_ship": "<p>We will work quickly to ship your order as soon as possible. Once your order has shipped, you will receive an email with further information. Delivery times vary depending on your location.</p>"
   },
   "info": {
+    // FLAMMA DIGITAL CODE - Info //
+    "sale_countdown": "Automatically displays a countdown if the product is on sale and has a 'Sale end date' (custom.sale_end_date) metafield set in the future.",
+    // FLAMMA DIGITAL CODE - Info end //
     "applies_on_image_only": "Applies to images only",
     "aspect_ratio_adjusted": "Adjusted in some layouts",
     "auto_open_cart_drawer": "When enabled, the cart drawer will automatically open when a product is added to cart.",
@@ -221,6 +237,25 @@
     "media_type_info": "Features are populated from your menu links"
   },
   "names": {
+    // FLAMMA DIGITAL CODE - Name // 
+    "safe_icons": "Safe icons",
+    "product_sku": "Product SKU",
+    "discount_badge": "Discount badge",
+    "price_installments": "Price installments",
+    "customer_review_line": "Customer review",
+    "product_tabs": "Product tabs",
+    "shipping_calculator": "Intelipost calculator",
+    "responsive_slide": "Responsive slide",
+    "instagram_feed": "Instagram feed",
+    "instagram_card": "Instagram cards",
+    "instagram_post": "Post",
+    "extra_payment": "Extra payment",
+    "extra_menu": "Extra menu",
+    "responsive_slideshow": "Responsive slideshow",
+    "sale_countdown": "Sale countdown",
+    "product_video": "Product video",
+    "sticky_atc": "Sticky add to cart",
+    // FLAMMA DIGITAL CODE - Name end // 
     "column": "Column",
     "product_title": "Product title",
     "custom_liquid": "Custom Liquid",
@@ -409,6 +444,16 @@
     "pills": "Pills"
   },
   "options": {
+    // FLAMMA DIGITAL CODE - Options //
+    "columns_3": "Three columns",
+    "columns_1": "One column",
+    "percentage": "Percentage",
+    "amount": "Amount",
+    "email": "Email",
+    "phone": "Phone",
+    "contact": "Contact",
+    "hours": "Hours",
+    // FLAMMA DIGITAL CODE - Options end //
     "above_carousel": "Above carousel",
     "accent": "Accent",
     "adapt_to_image": "Adapt to image",
@@ -718,6 +763,108 @@
     "youtube": "YouTube"
   },
   "settings": {
+    // FLAMMA DIGITAL CODE - Settings //
+    "badge_1": {
+      "svg": "Primary SVG",
+      "link": "Link"
+    },
+    "badge_2": {
+      "svg": "Secondary SVG",
+      "link": "Link"
+    },
+    "badge_3": {
+      "svg": "Tertiary SVG",
+      "link": "Link"
+    },
+    "badge_color": "Badge color",
+    "badge_hover_color": "Badge hover color",
+    "badge_size": "Badge size",
+    "custom_badge_1_header": "Primary badge",
+    "custom_badge_2_header": "Secondary badge",
+    "custom_badge_tag": "Tag",
+    "custom_badge_text": "Text",
+    "custom_badge_color_scheme": "Color",
+    "show_label": "Show label",
+    "label_text": "Label text",
+    "fallback_text": "Text when SKU is empty",
+    "display_as": "Display as",
+    "percentage_suffix": "Percentage suffix",
+    "currency_symbol": "Currency symbol",
+    "amount_suffix": "Amount suffix",
+    "installments_number": "Number of installments",
+    "prefix_text": "Prefix text",
+    "middle_text": "Middle text",
+    "suffix_text": "Suffix text",
+    "show_icon": "Show icon",
+    "custom_icon": "Custom icon",
+    "icon_size": "Icon size",
+    "remove_padding_no_icon": {
+      "label": "Remove internal padding",
+      "info": "Makes the text flush with the borders. Only available when icon is disabled."
+    },
+    "border_color": "Border color",
+    "avatar_1": "Customer 1",
+    "avatar_2": "Customer 2",
+    "avatar_3": "Customer 3",
+    "avatar_4": "Customer 4",
+    "review_text": "Review text",
+    "star_color": "Star color",
+    "avatar_size": "Avatar size",
+    "avatar_overlap": "Avatar overlap",
+    "avatar_border_width": "Avatar border width",
+    "padding_vertical": "Padding vertical",
+    "enable_tab": "Enable tab",
+    "tab_title": "Tab title",
+    "content_title": "Content title",
+    "metafield_path": {
+      "label": "File metafield path",
+      "info": "Enter the path in format 'namespace.key' (e.g., custom.file_download). Must be a 'File' type metafield."
+    },
+    "file_button_text": "Download button text",
+    "mobile_icons_only": "Show only icons on mobile",
+    "tab_preset": "Tab text style",
+    "content_title_preset": "Content title style",
+    "content_text_preset": "Content text style",
+    "cep_placeholder": "CEP input placeholder",
+    "calculate_button_text": "Calculate button text",
+    "default_weight": "Default weight (kg)",
+    "default_weight_info": "Used if the product has no weight defined.",
+    "default_width": "Default width (cm)",
+    "default_height": "Default height (cm)",
+    "default_length": "Default length (cm)",
+    "origin_zip_code": "Origin Zip Code",
+    "intelipost_api_key_label": "Intelipost API Key",
+    "intelipost_api_key_info": "Warning: Exposing this key in the theme is a security risk. Use an App Proxy or Middleware for production environments.",
+    "desktop_slide": "Desktop height",
+    "mobile_slide": "Mobile height",
+    "mobile_image": {
+      "label": "Mobile image",
+      "info": "Optional. If empty, will use the desktop image."
+    },
+    "mobile_video": {
+      "label": "Mobile video",
+      "info": "Optional. If empty, will use the desktop video."
+    },
+    "posts_style": "Posts style",
+    "profile_pic": "Profile picture",
+    "username": "Username",
+    "location": "Location",
+    "caption": "Caption",
+    "show_pix_icon": "Show Pix",
+    "show_boleto_icon": "Show Boleto",
+    "first_item_icon": "First icon",
+    "second_item_icon": "Second icon",
+    "third_item_icon": "Third icon",
+    "fourth_item_icon": "Fourth icon",
+    "title_preset": "Title preset",
+    "number_preset": "Number preset",
+    "label_preset": "Label preset",
+    "unit_background_color": "Unit background",
+    "number_color": "Number color",
+    "label_color": "Label color",
+    "controls": "Controls",
+    "mute": "Mute",
+    // FLAMMA DIGITAL CODE - Settings end //
     "accordion": "Accordion",
     "account": "Account",
     "alignment": "Alignment",
