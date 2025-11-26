@@ -10,16 +10,31 @@
 
 {% unless style == 'none' %}
   <search-button class="search-action{% if class != blank %} {{ class | strip }}{% endif %}">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-bar desktop-only">
+      <div class="search-bar__container">
+        <span class="search-bar__icon svg-wrapper" aria-hidden="true">
+          {{ 'icon-search.svg' | inline_asset_content }}
+        </span>
+        <input
+          type="search"
+          name="q"
+          class="search-bar__input"
+          placeholder="{{ 'content.search_input_placeholder' | t }}"
+          value="{{ search.terms | escape }}"
+          aria-label="{{ 'content.search_input_placeholder' | t }}"
+          autocomplete="off"
+        >
+        <input type="hidden" name="type" value="product">
+      </div>
+    </form>
+
     <button
       on:click="#search-modal/showDialog"
-      class="button button-unstyled search-modal__button header-actions__action"
+      class="button button-unstyled search-modal__button header-actions__action mobile-only"
       aria-label="{{ 'content.search_input_label' | t }}"
       aria-haspopup="dialog"
     >
-      <span
-        aria-hidden="true"
-        class="svg-wrapper"
-      >
+      <span aria-hidden="true" class="svg-wrapper">
         {{ 'icon-search.svg' | inline_asset_content }}
       </span>
     </button>
@@ -27,25 +42,85 @@
 {% endunless %}
 
 {% stylesheet %}
-  .search-action {
-    --search-border-radius: var(--style-border-radius-inputs);
-    --search-border-width: var(--style-border-width-inputs);
+  @media screen and (max-width: 749px) {
+    .desktop-only { display: none !important; }
+  }
+  @media screen and (min-width: 750px) {
+    .mobile-only { display: none !important; }
+  }
 
+  .search-action {
     display: flex;
+    align-items: center;
+    --search-height: 44px; 
+  }
+
+  .search-bar {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .search-bar__container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--search-height);
+    border: var(--style-border-width-inputs) solid var(--color-input-border);
+    border-radius: var(--style-border-radius-inputs);
+    background-color: transparent;
+    
+    /* Define a cor padrão do TEXTO (input) aqui */
+    color: var(--color-input-text);
+    
+    transition: border-color 0.2s ease;
+  }
+
+  .search-bar__container:focus-within {
+    border-color: var(--color-foreground);
+    background-color: var(--color-input-background);
+  }
+
+  .search-bar__icon {
+    position: absolute;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    
+    /* [ALTERAÇÃO] Força a cor do ícone para Foreground (diferente do input) */
+    color: var(--color-foreground);
+    opacity: 1;
+  }
+
+  .search-bar__input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    padding: calc(var(--padding-md) * 0.8) calc(var(--padding-md) * 0.8) calc(var(--padding-md) * 0.8) calc(var(--icon-size-md) + var(--padding-lg));
+    font-size: var(--font-size-sm);
+    
+    /* Herda a cor definida no container (var(--color-input-text)) */
+    color: currentColor;
+    outline: none;
+  }
+
+  .search-bar__input::placeholder {
+    color: currentColor;
+    opacity: 0.6;
   }
 
   .header__column--center .search-action {
-    width: auto;
+    justify-content: center;
     flex-grow: 1;
   }
 
-  :is(.header__column--left, .header__column--center) .search-action {
-    @media screen and (min-width: 750px) {
-      margin-inline: calc(var(--padding-lg) * -1);
-    }
+  .header__column--right .search-action {
+    justify-content: flex-end;
   }
 
-  .header__column--right .search-action {
+  :is(.header__column--left, .header__column--center) .search-action {
     @media screen and (min-width: 750px) {
       margin-inline: calc(var(--gap-md) * -1) calc(var(--gap-xs) * -1);
     }
