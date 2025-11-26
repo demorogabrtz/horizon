@@ -1479,6 +1479,52 @@
         "label": "t:settings.badge_sold_out_color_scheme",
         "default": "scheme-5"
       },
+      // FLAMMA DIGITAL CODE - Schema //
+      {
+        "type": "header",
+        "content": "t:settings.custom_badge_1_header"
+      },
+      {
+        "type": "text",
+        "id": "custom_badge_1_tag",
+        "label": "t:settings.custom_badge_tag",
+        "default": "new"
+      },
+      {
+        "type": "text",
+        "id": "custom_badge_1_text",
+        "label": "t:settings.custom_badge_text",
+        "default": "Lançamento"
+      },
+      {
+        "type": "color_scheme",
+        "id": "custom_badge_1_color_scheme",
+        "label": "t:settings.custom_badge_color_scheme",
+        "default": "scheme-accent-1"
+      },
+      {
+        "type": "header",
+        "content": "t:settings.custom_badge_2_header"
+      },
+      {
+        "type": "text",
+        "id": "custom_badge_2_tag",
+        "label": "t:settings.custom_badge_tag",
+        "default": "hot"
+      },
+      {
+        "type": "text",
+        "id": "custom_badge_2_text",
+        "label": "t:settings.custom_badge_text",
+        "default": "Em Alta"
+      },
+      {
+        "type": "color_scheme",
+        "id": "custom_badge_2_color_scheme",
+        "label": "t:settings.custom_badge_color_scheme",
+        "default": "scheme-accent-2"
+      },
+      // FLAMMA DIGITAL CODE - Schema end //
       {
         "type": "header",
         "content": "t:names.typography"
@@ -1568,7 +1614,6 @@
         ],
         "default": "body"
       },
-
       {
         "type": "select",
         "id": "button_text_case_primary",
@@ -1625,7 +1670,6 @@
         ],
         "default": "body"
       },
-
       {
         "type": "select",
         "id": "button_text_case_secondary",
@@ -1764,7 +1808,6 @@
         "info": "t:info.checkout_buttons",
         "default": true
       },
-
       {
         "type": "url",
         "id": "empty_cart_button_link",
