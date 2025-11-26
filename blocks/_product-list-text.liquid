@@ -1,7 +1,10 @@
 {% assign placeholder = 'content.featured_products' | t %}
 {% assign placeholder = '<h3>' | append: placeholder | append: '</h3>' %}
 
-{% render 'text', fallback_text: placeholder, block: block %}
+<div class="underline-header-div">
+  {% render 'text', fallback_text: placeholder, block: block %}
+  <span class="underline-header"></span>
+</div>
 
 {% schema %}
 {
