@@ -29,10 +29,38 @@
       {%- endif -%}
     </div>
   {%- endif -%}
+
+  {%- liquid
+    assign custom_tag_1 = settings.custom_badge_1_tag | downcase | strip
+    assign custom_text_1 = settings.custom_badge_1_text
+    assign custom_tag_2 = settings.custom_badge_2_tag | downcase | strip
+    assign custom_text_2 = settings.custom_badge_2_text
+  -%}
+
+  {%- for tag in product.tags -%}
+    {%- liquid
+      assign current_tag = tag | downcase | strip
+    -%}
+
+    {%- if custom_tag_1 != blank and custom_text_1 != blank and current_tag == custom_tag_1 -%}
+      <div class="product-badges__badge product-badges__badge--rectangle color-{{ settings.custom_badge_1_color_scheme }}">
+        {{ custom_text_1 }}
+      </div>
+    {%- endif -%}
+
+    {%- if custom_tag_2 != blank and custom_text_2 != blank and current_tag == custom_tag_2 -%}
+      <div class="product-badges__badge product-badges__badge--rectangle color-{{ settings.custom_badge_2_color_scheme }}">
+        {{ custom_text_2 }}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
 </div>
 
 {% stylesheet %}
   .product-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     --badge-inset: max(var(--padding-xs), calc((var(--border-radius) + var(--padding-xs)) * (1 - cos(45deg))));
 
     position: absolute;
